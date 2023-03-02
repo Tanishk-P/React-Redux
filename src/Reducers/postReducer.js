@@ -1,7 +1,7 @@
 import { FETCH_POSTS, NEW_POSTS } from "../Actions/types";
 
 const initialState = {
-  items: [],
+  postList: [],
   item: {},
 };
 
@@ -10,7 +10,7 @@ export default function (state = initialState, action) {
     case FETCH_POSTS:
       return {
         ...state,
-        items: action.payload,
+        postList: action.payload,
       };
       case NEW_POSTS:
         return {
