@@ -2,3 +2,32 @@
     width: 90%;
     margin: auto;
 }
+
+.formAdd {
+    background-color: aliceblue;
+    margin: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.addPosts {
+    background-color: lightgrey;
+    width: fit-content;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 20px;
+}
+
+.submit {
+    background-color: #a7bcff;
+    border-style: dashed;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    height: 4vh;
+}

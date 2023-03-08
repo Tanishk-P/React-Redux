@@ -24,7 +24,7 @@ function PostList() {
   return (
     <div>
       <h1>Posts</h1>
-      <input id='file' type={'file'} hidden /> 
+      {List}
     </div>
   );
 }
