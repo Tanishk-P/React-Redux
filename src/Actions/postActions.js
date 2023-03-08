@@ -47,3 +47,21 @@ export const addPosts = (post) => async dispatch => {
     console.log(err)
   }
 }
+
+export const updatedPosts = (title, body) => {
+  return new Promise((resolve, reject) =>{
+    axios({
+      method: "POST",
+      url: "https://jsonplaceholder.typicode.com/posts",
+      data: {
+        title: title,
+        body: body
+      }
+    }).then(response => {
+      console.log(response);
+      resolve(response);
+    }).catch(error => {
+      reject(error);
+    })
+  })
+} 

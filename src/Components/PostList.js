@@ -7,8 +7,10 @@ function PostList() {
   const postItems = useSelector(state => state.posts.postList);
    const List = postItems.map((post) => (
     <div key={post.id}>
-      <h2>{post.title}</h2>
-      <p>{post.body}</p>
+      <ul>
+          <h2>{post.id}- {post.title}</h2>
+          <p>{post.body}</p>
+      </ul>
     </div>
   ));
 
@@ -23,8 +25,8 @@ function PostList() {
 
   return (
     <div>
-      <h1>Posts</h1>
-      {List}
+      {/* <h1>Posts</h1> */}
+      {/* {List} */}
     </div>
   );
 }

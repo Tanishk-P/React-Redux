@@ -4,32 +4,68 @@ import { useDispatch, useSelector } from "react-redux";
 import logo from "../images/note.png";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { getPosts, updatedPosts } from "../Actions/postActions";
 
 function AddForm() {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
+    const dispatch = useDispatch();
+    const postItems = useSelector(state => state.posts.postList);
+
+    const List = postItems.map((post) => (
+      <div key={post.id}>
+        <ul>
+            <h2>{post.id}- {post.title}</h2>
+            <p>{post.body}</p>
+        </ul>
+      </div>
+    ));
+
     const postTitle = [title];
     const postBody= [body];
+    
+  useEffect(() => {
+    dispatch(getPosts());
+  },[dispatch])
+
+    // const handleSubmit = async (e) => {
+    //   e.preventDefault();
+
+    //   if (title && body) {
+    //     const response = await axios.post('https://jsonplaceholder.typicode.com/posts', {
+    //       title: title,
+    //       body: body,
+    //       userId: 1
+    //     });
+    //     toast.success("Added the post successfully.");
+    //     console.log(response.data);
+    //     postItems.push(response.data);
+    //   } else {
+    //     toast.error("Cannot add empty post.")
+    //   }
+    //   setTitle('');
+    //   setBody('');
+    // };
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      if (title && body) {
-        const response = await axios.post('https://jsonplaceholder.typicode.com/posts', {
-          title: title,
-          body: body,
-          userId: 1
-        });
-        toast.success("Added the post successfully.");
-        console.log(response.data);
-        // post.push(response.data)
-      } else {
-        toast.error("Cannot add empty post.")
-      }
+
+        updatedPosts(title, body).then(res => {
+          console.log(res)
+          if (res.status === 201 ) {
+            toast.success("Added the post successfully.");
+            dispatch(getPosts());
+          }
+        }).catch(err => {
+          toast.error("Cannot add empty post.")
+        })
+        
       setTitle('');
       setBody('');
-    };
+    }
 
   return (
+    <div>
     <div className="formAdd">
       <div className="addPosts">
         <form onSubmit={handleSubmit}>
@@ -116,7 +152,9 @@ function AddForm() {
               color: "GrayText",
             }}/> */}
           </div>
-        </div>
+      </div>
+    </div>
+    {List}
     </div>
   );
 }
