@@ -16,7 +16,7 @@ function AddForm() {
     const validTitle = new RegExp("^[a-zA-Z\\s]*$");
 
     if (!validTitle.test(title)) {
-      toast.warn("Invaild Title.");
+      toast.warn("Invaild Title. Title can contain only alphabets.");
       validated = false;
     }
     if (!title) {
