@@ -1,160 +1,108 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import logo from "../images/note.png";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { getPosts, updatedPosts } from "../Actions/postActions";
+import ReactLoading from "react-loading";
 
 function AddForm() {
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
-    const dispatch = useDispatch();
-    const postItems = useSelector(state => state.posts.postList);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [loading, displayLoading] = useState(false);
+  const dispatch = useDispatch();
 
-    const List = postItems.map((post) => (
-      <div key={post.id}>
-        <ul>
-            <h2>{post.id}- {post.title}</h2>
-            <p>{post.body}</p>
-        </ul>
-      </div>
-    ));
+  function checkValidation() {
+    let validated = true;
+    const validTitle = new RegExp("^[a-zA-Z\\s]*$");
 
-    const postTitle = [title];
-    const postBody= [body];
-    
-  useEffect(() => {
-    dispatch(getPosts());
-  },[dispatch])
-
-    // const handleSubmit = async (e) => {
-    //   e.preventDefault();
-
-    //   if (title && body) {
-    //     const response = await axios.post('https://jsonplaceholder.typicode.com/posts', {
-    //       title: title,
-    //       body: body,
-    //       userId: 1
-    //     });
-    //     toast.success("Added the post successfully.");
-    //     console.log(response.data);
-    //     postItems.push(response.data);
-    //   } else {
-    //     toast.error("Cannot add empty post.")
-    //   }
-    //   setTitle('');
-    //   setBody('');
-    // };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-
-        updatedPosts(title, body).then(res => {
-          console.log(res)
-          if (res.status === 201 ) {
-            toast.success("Added the post successfully.");
-            dispatch(getPosts());
-          }
-        }).catch(err => {
-          toast.error("Cannot add empty post.")
-        })
-        
-      setTitle('');
-      setBody('');
+    if (!validTitle.test(title)) {
+      toast.warn("Invaild Title.");
+      validated = false;
     }
+    if (!title) {
+      toast.warn("Title is empty.");
+      validated = false;
+    }
+    if (!body) {
+      toast.warn("Body is empty.");
+      validated = false;
+    }
+    return validated;
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (checkValidation()) {
+      displayLoading(true);
+      updatedPosts(title, body).then(res => {
+        if (res.status === 201) {
+          displayLoading(false);
+          toast.success("Added the post successfully.");
+          dispatch(getPosts());
+          setTitle('');
+          setBody('');
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+    }
+  }
 
   return (
     <div>
-    <div className="formAdd">
-      <div className="addPosts">
-        <form onSubmit={handleSubmit}>
-          <h1>Add Posts:</h1>
+      <div className={`formAdd ${loading ? 'loading-bg' : ''}`}>
+        <div className="addPosts">
+          <form onSubmit={handleSubmit}>
+            <h1>Add Posts:</h1>
+            <div>
+              <label>
+                <input
+                  style={{
+                    border: 'none',
+                    width: '90%',
+                    borderRadius: '5px',
+                    padding: '10px',
+                    margin: '2px'
+                  }}
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter a post title"
+                />
+              </label>
+            </div>
+            <br />
+            <div>
+              <label>
+                <textarea
+                  style={{
+                    border: 'none',
+                    borderRadius: '5px',
+                    width: '100%',
+                    height: '6vh'
+                  }}
+                  name="body"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="Enter body"
+                />
+              </label>
+            </div>
+            <br />
+            <div>
+              <button className="submit" type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+        {loading && <div className="loading-overlay"><ReactLoading color="lightgreen" delay={0.05} type="bars"></ReactLoading></div>}
+        <div className="yourPost">
           <div>
-            <label>
-              <input
-                style={{
-                  border: 'none',
-                  width: '90%',
-                  borderRadius: '5px',
-                  padding: '10px',
-                  margin: '2px'
-                }}
-                name="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter a post title"
-              />
-            </label>
+            <input className="postTitle" placeholder="Post title" readOnly value={title} />
+            <hr />
+            <p>{body}</p>
           </div>
-          <br />
-          <div>
-            <label>
-              <textarea
-                style={{
-                  border: 'none',
-                  borderRadius: '5px',
-                  width: '100%',
-                  height: '6vh'
-                }}
-                name="body"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="Enter body"
-              />
-            </label>
-          </div>
-          <br />
-          {/* <div>
-            <label htmlFor="file">
-              <img
-                src={logo}
-                style={{ height: "22px", width: "22px" }}
-                alt="Add your Post Image"
-              />
-            </label>
-          </div> */}
-          <div>
-            <button className="submit" type="submit">Submit</button>
-          </div>
-        </form>
-      </div>  
-      <div 
-          className="yourPost"
-          style={{
-            backgroundColor: "InfoBackground",
-            marginLeft: "10px",
-            height: "30vh",
-            width: "60vw",
-            color: "GrayText",
-            padding: "5px",
-            gap: "15px",
-            border: "dashed",
-            borderRadius: '5px'
-          }}
-          >
-          <div>
-            {/* <h2>{postTitle}</h2> */}
-            <input placeholder="Post title" readOnly value={postTitle} style={{ 
-              marginTop: "10px",
-              border: 'none',
-              fontSize: "24px",
-              fontWeight: "bold",
-              color: "GrayText",
-              width: "100%"
-            }}/>
-            <hr/>            
-            <p style={{ overflow: "none"}} placeholder="your post body">{postBody}</p>
-            {/* <input placeholder="Post body" readOnly value={postBody} style={{ 
-              marginTop: "10px",
-              border: 'none',
-              fontSize: "16px",
-              color: "GrayText",
-            }}/> */}
-          </div>
+        </div>
       </div>
-    </div>
-    {List}
     </div>
   );
 }

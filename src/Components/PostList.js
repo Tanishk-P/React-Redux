@@ -18,15 +18,10 @@ function PostList() {
     dispatch(getPosts());
   }, [dispatch]);
 
-  const handleClick = () => {
-    console.log('hello')
- 
-  }
-
   return (
     <div>
-      {/* <h1>Posts</h1> */}
-      {/* {List} */}
+      <h1>Posts</h1>
+      {List}
     </div>
   );
 }
